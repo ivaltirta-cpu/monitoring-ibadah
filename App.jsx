@@ -14,6 +14,7 @@
         body {
             font-family: 'Plus Jakarta Sans', sans-serif;
             background-color: #FDFCF0;
+            -webkit-tap-highlight-color: transparent;
         }
 
         .custom-shadow {
@@ -24,8 +25,10 @@
             box-shadow: 0 4px 0px 0px #E2E8F0;
         }
 
+        /* Perbaikan Bayangan Kartu Selesai agar lebih terlihat di Vercel */
         .completed-shadow {
-            box-shadow: 0 4px 0px 0px #FACC15;
+            box-shadow: 0 6px 0px 0px #FACC15;
+            border-color: #FACC15 !important;
         }
 
         .animate-pop {
@@ -35,6 +38,11 @@
         @keyframes pop {
             0% { transform: scale(0.95); opacity: 0; }
             100% { transform: scale(1); opacity: 1; }
+        }
+
+        /* Memastikan ikon Lucide ter-render dengan benar */
+        .lucide {
+            vertical-align: middle;
         }
     </style>
 </head>
@@ -52,13 +60,13 @@
 
         <!-- Date Navigator -->
         <div class="flex items-center justify-between max-w-sm mx-auto bg-white/20 p-4 rounded-3xl border border-white/30 backdrop-blur-md">
-            <button onclick="changeDate(-1)" class="p-2 hover:bg-white/20 rounded-xl transition-all">
+            <button onclick="changeDate(-1)" class="p-2 hover:bg-white/20 rounded-xl transition-all outline-none">
                 <i data-lucide="chevron-left"></i>
             </button>
             <div class="text-center">
-                <span id="display-date" class="font-black italic text-sm md:text-base italic text-white">Memuat Tanggal...</span>
+                <span id="display-date" class="font-black italic text-sm md:text-base text-white">Memuat Tanggal...</span>
             </div>
-            <button onclick="changeDate(1)" class="p-2 hover:bg-white/20 rounded-xl transition-all">
+            <button onclick="changeDate(1)" class="p-2 hover:bg-white/20 rounded-xl transition-all outline-none">
                 <i data-lucide="chevron-right"></i>
             </button>
         </div>
@@ -76,7 +84,7 @@
             <div class="flex items-center justify-center gap-2 mb-2 text-yellow-300 font-black text-[10px] uppercase tracking-widest">
                 <i data-lucide="sparkles" class="w-4 h-4"></i> Pesan Hikmah Hari Ini
             </div>
-            <p id="daily-quote" class="text-lg italic font-black px-4 leading-relaxed">
+            <p id="daily-quote" class="text-lg italic font-black px-4 leading-relaxed relative z-10">
                 "Barangsiapa yang berpuasa Ramadhan karena iman dan mengharap pahala, maka diampuni dosa-dosanya yang telah lalu."
             </p>
         </div>
@@ -98,7 +106,7 @@
     <div id="modal-overlay" class="fixed inset-0 bg-emerald-900/80 backdrop-blur-md z-50 hidden flex items-end sm:items-center justify-center">
         <div class="bg-white w-full max-w-md rounded-t-[3rem] sm:rounded-[3rem] shadow-2xl overflow-hidden animate-pop border-t-8 border-emerald-500 max-h-[90vh] flex flex-col">
             <div class="bg-[#5FB494] p-8 text-white text-center relative">
-                <button onclick="closeModal()" class="absolute right-6 top-6 p-2 bg-black/10 rounded-xl hover:bg-black/20">
+                <button onclick="closeModal()" class="absolute right-6 top-6 p-2 bg-black/10 rounded-xl hover:bg-black/20 outline-none">
                     <i data-lucide="x"></i>
                 </button>
                 <div id="modal-avatar" class="text-5xl mb-2">👨</div>
@@ -109,7 +117,7 @@
                 <!-- Checklist akan diisi oleh JavaScript -->
             </div>
             <div class="p-6 bg-[#FDFCF0]">
-                <button onclick="closeModal()" class="w-full bg-[#5FB494] text-white py-4 rounded-2xl font-black shadow-lg border-b-4 border-[#3D7A63] active:scale-95 transition-all">
+                <button onclick="closeModal()" class="w-full bg-[#5FB494] text-white py-4 rounded-2xl font-black shadow-lg border-b-4 border-[#3D7A63] active:scale-95 transition-all outline-none">
                     SIMPAN & TUTUP ✨
                 </button>
             </div>
@@ -182,11 +190,13 @@
             document.getElementById('modal-name').innerText = name;
             document.getElementById('modal-avatar').innerText = name.includes('Papa') ? '👨' : name.includes('Mama') ? '👩' : '🧒';
             document.getElementById('modal-overlay').classList.remove('hidden');
+            document.body.style.overflow = 'hidden'; // Stop scrolling
             renderTasks();
         }
 
         function closeModal() {
             document.getElementById('modal-overlay').classList.add('hidden');
+            document.body.style.overflow = 'auto'; // Re-enable scrolling
             activeMember = null;
         }
 
@@ -224,7 +234,7 @@
                 const isFull = prog === 100;
                 const card = document.createElement('div');
                 card.onclick = () => openModal(name);
-                card.className = `bg-white p-6 rounded-[2.5rem] border-4 cursor-pointer transition-all hover:scale-[1.02] active:scale-95 ${isFull ? 'border-yellow-400 completed-shadow' : 'border-emerald-100 card-shadow'}`;
+                card.className = `bg-white p-6 rounded-[2.5rem] border-4 cursor-pointer transition-all hover:scale-[1.02] active:scale-95 ${isFull ? 'completed-shadow' : 'border-emerald-100 card-shadow'}`;
                 card.innerHTML = `
                     <div class="flex justify-between items-center mb-4">
                         <div class="flex items-center gap-3">
