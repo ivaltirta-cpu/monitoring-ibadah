@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Monitoring Ibadah Keluarga Ival & Linda</title>
+    <!-- Tailwind CSS untuk Desain Cepat -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap');
+        
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: #FDFCF0;
+        }
+
+        .custom-shadow {
+            box-shadow: 0 10px 0px 0px #4A9378;
+        }
+
+        .card-shadow {
+            box-shadow: 0 4px 0px 0px #E2E8F0;
+        }
+
+        .completed-shadow {
+            box-shadow: 0 4px 0px 0px #FACC15;
+        }
+
+        .animate-pop {
+            animation: pop 0.3s ease-out;
+        }
+
+        @keyframes pop {
+            0% { transform: scale(0.95); opacity: 0; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+    </style>
+</head>
+<body class="pb-12 text-slate-800">
+
+    <!-- Header -->
+    <header class="bg-[#5FB494] text-white p-6 rounded-b-[3rem] mb-8 text-center border-b-4 border-[#4A9378] shadow-lg">
+        <div class="flex flex-col items-center gap-2 mb-4">
+            <div class="bg-white/20 p-3 rounded-full mb-2">
+                <i data-lucide="moon" class="w-10 h-10"></i>
+            </div>
+            <h1 class="text-2xl md:text-3xl font-black uppercase tracking-tight">Monitoring Ibadah Keluarga</h1>
+            <p class="text-[10px] font-bold bg-yellow-400 text-[#4A9378] px-4 py-1 rounded-full uppercase">Ramadhan Edition ✨</p>
+        </div>
+
+        <!-- Date Navigator -->
+        <div class="flex items-center justify-between max-w-sm mx-auto bg-white/20 p-4 rounded-3xl border border-white/30 backdrop-blur-md">
+            <button onclick="changeDate(-1)" class="p-2 hover:bg-white/20 rounded-xl transition-all">
+                <i data-lucide="chevron-left"></i>
+            </button>
+            <div class="text-center">
+                <span id="display-date" class="font-black italic text-sm md:text-base italic text-white">Memuat Tanggal...</span>
+            </div>
+            <button onclick="changeDate(1)" class="p-2 hover:bg-white/20 rounded-xl transition-all">
+                <i data-lucide="chevron-right"></i>
+            </button>
+        </div>
+    </header>
+
+    <main class="max-w-4xl mx-auto px-4 space-y-8">
+        
+        <!-- Kartu Anggota Keluarga -->
+        <div id="family-grid" class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <!-- Data akan diisi oleh JavaScript -->
+        </div>
+
+        <!-- Pesan Hikmah (AI Placeholder) -->
+        <div class="bg-emerald-500 text-white p-6 rounded-[2.5rem] shadow-xl border-b-8 border-emerald-700 text-center relative overflow-hidden">
+            <div class="flex items-center justify-center gap-2 mb-2 text-yellow-300 font-black text-[10px] uppercase tracking-widest">
+                <i data-lucide="sparkles" class="w-4 h-4"></i> Pesan Hikmah Hari Ini
+            </div>
+            <p id="daily-quote" class="text-lg italic font-black px-4 leading-relaxed">
+                "Barangsiapa yang berpuasa Ramadhan karena iman dan mengharap pahala, maka diampuni dosa-dosanya yang telah lalu."
+            </p>
+        </div>
+
+        <!-- Papan Bintang -->
+        <section class="bg-[#416D5B] text-white p-8 rounded-[3rem] shadow-2xl border-b-8 border-[#2D4D40]">
+            <div class="flex items-center gap-3 mb-8">
+                <i data-lucide="award" class="text-yellow-400 w-8 h-8"></i>
+                <h2 class="text-xl font-black uppercase tracking-tight">Papan Bintang Keluarga</h2>
+            </div>
+            <div id="leaderboard" class="space-y-6">
+                <!-- Data akan diisi oleh JavaScript -->
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Modal Input -->
+    <div id="modal-overlay" class="fixed inset-0 bg-emerald-900/80 backdrop-blur-md z-50 hidden flex items-end sm:items-center justify-center">
+        <div class="bg-white w-full max-w-md rounded-t-[3rem] sm:rounded-[3rem] shadow-2xl overflow-hidden animate-pop border-t-8 border-emerald-500 max-h-[90vh] flex flex-col">
+            <div class="bg-[#5FB494] p-8 text-white text-center relative">
+                <button onclick="closeModal()" class="absolute right-6 top-6 p-2 bg-black/10 rounded-xl hover:bg-black/20">
+                    <i data-lucide="x"></i>
+                </button>
+                <div id="modal-avatar" class="text-5xl mb-2">👨</div>
+                <h3 id="modal-name" class="text-2xl font-black uppercase">Nama Anggota</h3>
+                <p class="text-emerald-100 text-xs font-bold uppercase tracking-widest mt-1">Ceklis Ibadah Hari Ini</p>
+            </div>
+            <div id="task-list" class="p-6 space-y-3 bg-[#FDFCF0] overflow-y-auto">
+                <!-- Checklist akan diisi oleh JavaScript -->
+            </div>
+            <div class="p-6 bg-[#FDFCF0]">
+                <button onclick="closeModal()" class="w-full bg-[#5FB494] text-white py-4 rounded-2xl font-black shadow-lg border-b-4 border-[#3D7A63] active:scale-95 transition-all">
+                    SIMPAN & TUTUP ✨
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Data Dasar
+        const familyMembers = ['Papa Ival', 'Mama Linda', 'Kaka Latifa', 'Ade Aulia'];
+        const tasks = [
+            { id: 'puasa', label: 'Puasa', icon: '🌙' },
+            { id: 'solat', label: 'Solat 5 Waktu', icon: '🕌' },
+            { id: 'quran', label: 'Baca Quran 1 Juz', icon: '📖' },
+            { id: 'duha', label: 'Solat Duha', icon: '☀️' },
+            { id: 'tahajud', label: 'Solat Tahajud', icon: '✨' }
+        ];
+
+        let currentDate = new Date().toISOString().split('T')[0];
+        let storageData = JSON.parse(localStorage.getItem('family_ramadhan_data')) || {};
+        let activeMember = null;
+
+        // Inisialisasi Icons
+        function initIcons() {
+            lucide.createIcons();
+        }
+
+        // Navigasi Tanggal
+        function changeDate(days) {
+            let date = new Date(currentDate);
+            date.setDate(date.getDate() + days);
+            currentDate = date.toISOString().split('T')[0];
+            render();
+        }
+
+        function formatDisplayDate(dateStr) {
+            const options = { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' };
+            return new Date(dateStr).toLocaleDateString('id-ID', options);
+        }
+
+        // Logika Perhitungan
+        function getProgress(name, date) {
+            const dayData = storageData[date]?.[name] || {};
+            const doneCount = Object.values(dayData).filter(Boolean).length;
+            return (doneCount / tasks.length) * 100;
+        }
+
+        function getAverage(name) {
+            const dates = Object.keys(storageData);
+            if (dates.length === 0) return 0;
+            let total = 0;
+            dates.forEach(d => total += getProgress(name, d));
+            return total / dates.length;
+        }
+
+        // Fungsi Toggle Tugas
+        function toggleTask(taskId) {
+            if (!storageData[currentDate]) storageData[currentDate] = {};
+            if (!storageData[currentDate][activeMember]) storageData[currentDate][activeMember] = {};
+            
+            storageData[currentDate][activeMember][taskId] = !storageData[currentDate][activeMember][taskId];
+            
+            localStorage.setItem('family_ramadhan_data', JSON.stringify(storageData));
+            renderTasks();
+            render();
+        }
+
+        // UI Rendering
+        function openModal(name) {
+            activeMember = name;
+            document.getElementById('modal-name').innerText = name;
+            document.getElementById('modal-avatar').innerText = name.includes('Papa') ? '👨' : name.includes('Mama') ? '👩' : '🧒';
+            document.getElementById('modal-overlay').classList.remove('hidden');
+            renderTasks();
+        }
+
+        function closeModal() {
+            document.getElementById('modal-overlay').classList.add('hidden');
+            activeMember = null;
+        }
+
+        function renderTasks() {
+            const container = document.getElementById('task-list');
+            container.innerHTML = '';
+            
+            tasks.forEach(task => {
+                const isDone = storageData[currentDate]?.[activeMember]?.[task.id];
+                const item = document.createElement('div');
+                item.className = `flex items-center justify-between p-4 rounded-2xl border-4 transition-all cursor-pointer ${isDone ? 'bg-emerald-50 border-emerald-500' : 'bg-white border-transparent shadow-sm'}`;
+                item.onclick = () => toggleTask(task.id);
+                item.innerHTML = `
+                    <div class="flex items-center gap-3">
+                        <span class="text-2xl">${task.icon}</span>
+                        <span class="font-black text-sm">${task.label}</span>
+                    </div>
+                    <div class="w-8 h-8 rounded-xl border-4 flex items-center justify-center ${isDone ? 'bg-emerald-500 border-emerald-500 text-white' : 'border-slate-100 bg-slate-50'}">
+                        ${isDone ? '<i data-lucide="check" class="w-5 h-5 text-white"></i>' : ''}
+                    </div>
+                `;
+                container.appendChild(item);
+            });
+            initIcons();
+        }
+
+        function render() {
+            document.getElementById('display-date').innerText = formatDisplayDate(currentDate);
+
+            // Render Grid Keluarga
+            const grid = document.getElementById('family-grid');
+            grid.innerHTML = '';
+            familyMembers.forEach(name => {
+                const prog = getProgress(name, currentDate);
+                const isFull = prog === 100;
+                const card = document.createElement('div');
+                card.onclick = () => openModal(name);
+                card.className = `bg-white p-6 rounded-[2.5rem] border-4 cursor-pointer transition-all hover:scale-[1.02] active:scale-95 ${isFull ? 'border-yellow-400 completed-shadow' : 'border-emerald-100 card-shadow'}`;
+                card.innerHTML = `
+                    <div class="flex justify-between items-center mb-4">
+                        <div class="flex items-center gap-3">
+                            <span class="text-3xl">${name.includes('Papa') ? '👨' : name.includes('Mama') ? '👩' : '🧒'}</span>
+                            <h3 class="text-lg font-black">${name}</h3>
+                        </div>
+                        <i data-lucide="chevron-right" class="text-slate-300"></i>
+                    </div>
+                    <div class="text-right text-[10px] font-black text-slate-400 mb-1 tracking-widest">${Math.round(prog)}% SELESAI</div>
+                    <div class="w-full bg-slate-100 h-4 rounded-full overflow-hidden p-1">
+                        <div class="h-full rounded-full transition-all duration-700 ${isFull ? 'bg-yellow-400' : 'bg-emerald-500'}" style="width: ${prog}%"></div>
+                    </div>
+                `;
+                grid.appendChild(card);
+            });
+
+            // Render Leaderboard
+            const leaderboard = document.getElementById('leaderboard');
+            leaderboard.innerHTML = '';
+            familyMembers.forEach(name => {
+                const avg = getAverage(name);
+                const item = document.createElement('div');
+                item.className = 'space-y-2';
+                item.innerHTML = `
+                    <div class="flex justify-between text-xs font-black uppercase tracking-wider">
+                        <span>${name}</span>
+                        <span class="text-yellow-400">${avg.toFixed(1)}%</span>
+                    </div>
+                    <div class="w-full bg-black/20 h-3 rounded-full overflow-hidden p-0.5 border border-white/10">
+                        <div class="h-full bg-yellow-400 rounded-full transition-all duration-1000" style="width: ${avg}%"></div>
+                    </div>
+                `;
+                leaderboard.appendChild(item);
+            });
+
+            initIcons();
+        }
+
+        // Jalankan Pertama Kali
+        window.onload = render;
+    </script>
+</body>
+</html>
