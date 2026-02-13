@@ -139,6 +139,12 @@
         let storageData = JSON.parse(localStorage.getItem('family_ramadhan_data')) || {};
         let activeMember = null;
 
+        // Fungsi Helper mendapatkan Ikon Hijab/Pria
+        function getMemberIcon(name) {
+            if (name.includes('Papa')) return '👨';
+            return '🧕'; // Ikon Hijab untuk Mama, Kaka, dan Ade
+        }
+
         // Inisialisasi Icons
         function initIcons() {
             lucide.createIcons();
@@ -188,7 +194,7 @@
         function openModal(name) {
             activeMember = name;
             document.getElementById('modal-name').innerText = name;
-            document.getElementById('modal-avatar').innerText = name.includes('Papa') ? '👨' : name.includes('Mama') ? '👩' : '🧒';
+            document.getElementById('modal-avatar').innerText = getMemberIcon(name);
             document.getElementById('modal-overlay').classList.remove('hidden');
             document.body.style.overflow = 'hidden'; // Stop scrolling
             renderTasks();
@@ -238,7 +244,7 @@
                 card.innerHTML = `
                     <div class="flex justify-between items-center mb-4">
                         <div class="flex items-center gap-3">
-                            <span class="text-3xl">${name.includes('Papa') ? '👨' : name.includes('Mama') ? '👩' : '🧒'}</span>
+                            <span class="text-3xl">${getMemberIcon(name)}</span>
                             <h3 class="text-lg font-black">${name}</h3>
                         </div>
                         <i data-lucide="chevron-right" class="text-slate-300"></i>
