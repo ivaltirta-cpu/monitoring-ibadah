@@ -3,278 +3,152 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Monitoring Ibadah Keluarga Ival & Linda</title>
-    <!-- Tailwind CSS untuk Desain Cepat -->
+    <title>Studio AI Kreator Pro - Ready for Hosting</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Lucide Icons -->
-    <script src="https://unpkg.com/lucide@latest"></script>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap');
-        
-        body {
-            font-family: 'Plus Jakarta Sans', sans-serif;
-            background-color: #FDFCF0;
-            -webkit-tap-highlight-color: transparent;
-        }
-
-        .custom-shadow {
-            box-shadow: 0 10px 0px 0px #4A9378;
-        }
-
-        .card-shadow {
-            box-shadow: 0 4px 0px 0px #E2E8F0;
-        }
-
-        /* Perbaikan Bayangan Kartu Selesai agar lebih terlihat di Vercel */
-        .completed-shadow {
-            box-shadow: 0 6px 0px 0px #FACC15;
-            border-color: #FACC15 !important;
-        }
-
-        .animate-pop {
-            animation: pop 0.3s ease-out;
-        }
-
-        @keyframes pop {
-            0% { transform: scale(0.95); opacity: 0; }
-            100% { transform: scale(1); opacity: 1; }
-        }
-
-        /* Memastikan ikon Lucide ter-render dengan benar */
-        .lucide {
-            vertical-align: middle;
-        }
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap');
+        body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: #f8fafc; }
+        .glass { background: white; border: 1px solid #e2e8f0; box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1); }
+        .loader { border: 3px solid #f3f3f3; border-top: 3px solid #4f46e5; border-radius: 50%; width: 24px; height: 24px; animation: spin 1s linear infinite; }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
     </style>
 </head>
-<body class="pb-12 text-slate-800">
-
-    <!-- Header -->
-    <header class="bg-[#5FB494] text-white p-6 rounded-b-[3rem] mb-8 text-center border-b-4 border-[#4A9378] shadow-lg">
-        <div class="flex flex-col items-center gap-2 mb-4">
-            <div class="bg-white/20 p-3 rounded-full mb-2">
-                <i data-lucide="moon" class="w-10 h-10"></i>
-            </div>
-            <h1 class="text-2xl md:text-3xl font-black uppercase tracking-tight">Monitoring Ibadah Keluarga</h1>
-            <p class="text-[10px] font-bold bg-yellow-400 text-[#4A9378] px-4 py-1 rounded-full uppercase">Ramadhan Edition ✨</p>
+<body class="p-4 md:p-8 min-h-screen">
+    <div class="max-w-3xl mx-auto">
+        <div class="text-center mb-8">
+            <h1 class="text-3xl font-extrabold text-slate-900 tracking-tight">STUDIO AI <span class="text-indigo-600">PRO</span></h1>
+            <p class="text-slate-500 mt-2 text-sm">Produksi konten otomatis dengan teknologi Gemini AI.</p>
         </div>
 
-        <!-- Date Navigator -->
-        <div class="flex items-center justify-between max-w-sm mx-auto bg-white/20 p-4 rounded-3xl border border-white/30 backdrop-blur-md">
-            <button onclick="changeDate(-1)" class="p-2 hover:bg-white/20 rounded-xl transition-all outline-none">
-                <i data-lucide="chevron-left"></i>
-            </button>
-            <div class="text-center">
-                <span id="display-date" class="font-black italic text-sm md:text-base text-white">Memuat Tanggal...</span>
+        <!-- MAIN GENERATOR SECTION -->
+        <div class="glass p-8 rounded-3xl">
+            <div class="flex items-center justify-between mb-4">
+                <label class="block text-sm font-bold text-slate-700">Topik Video (Shorts/Reels/TikTok)</label>
+                <span class="text-[10px] font-bold text-green-600 bg-green-50 px-2 py-1 rounded-md uppercase tracking-wider">Status: API Connected</span>
             </div>
-            <button onclick="changeDate(1)" class="p-2 hover:bg-white/20 rounded-xl transition-all outline-none">
-                <i data-lucide="chevron-right"></i>
+            <textarea id="topicInput" rows="3" placeholder="Contoh: 3 Tips produktivitas untuk mahasiswa..." 
+                class="w-full p-4 rounded-2xl border border-slate-200 outline-none focus:border-indigo-500 transition mb-6 bg-slate-50/50 resize-none font-medium"></textarea>
+            
+            <button id="execBtn" onclick="runAI()" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-5 rounded-2xl flex items-center justify-center gap-3 transition-all shadow-lg shadow-indigo-100">
+                <span id="btnText">Buat Naskah & Visual ✨</span>
+                <div id="loader" class="hidden loader"></div>
             </button>
         </div>
-    </header>
 
-    <main class="max-w-4xl mx-auto px-4 space-y-8">
-        
-        <!-- Kartu Anggota Keluarga -->
-        <div id="family-grid" class="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <!-- Data akan diisi oleh JavaScript -->
-        </div>
+        <!-- RESULT SECTION -->
+        <div id="resultArea" class="hidden mt-8 space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
+            <!-- Script Output -->
+            <div class="glass rounded-3xl overflow-hidden">
+                <div class="px-6 py-4 bg-slate-50 border-b border-slate-100 flex justify-between items-center">
+                    <span class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Naskah Video Konten</span>
+                    <button onclick="copyToClipboard('scriptOut')" class="text-[10px] font-bold text-indigo-600 uppercase hover:underline">Salin</button>
+                </div>
+                <div class="p-6">
+                    <div id="scriptOut" class="text-slate-700 whitespace-pre-wrap text-sm leading-relaxed font-medium"></div>
+                </div>
+            </div>
 
-        <!-- Pesan Hikmah (AI Placeholder) -->
-        <div class="bg-emerald-500 text-white p-6 rounded-[2.5rem] shadow-xl border-b-8 border-emerald-700 text-center relative overflow-hidden">
-            <div class="flex items-center justify-center gap-2 mb-2 text-yellow-300 font-black text-[10px] uppercase tracking-widest">
-                <i data-lucide="sparkles" class="w-4 h-4"></i> Pesan Hikmah Hari Ini
+            <!-- Visual Prompt Output -->
+            <div class="glass rounded-3xl overflow-hidden border-indigo-100 bg-indigo-50/10">
+                <div class="px-6 py-4 bg-indigo-50 border-b border-indigo-100 flex justify-between items-center">
+                    <span class="text-[10px] font-bold text-indigo-400 uppercase tracking-widest">Prompt Visual (Inggris)</span>
+                    <button onclick="copyToClipboard('promptOut')" class="text-[10px] font-bold text-indigo-600 uppercase hover:underline">Salin</button>
+                </div>
+                <div class="p-6">
+                    <div id="promptOut" class="text-indigo-900 italic text-sm font-mono"></div>
+                </div>
             </div>
-            <p id="daily-quote" class="text-lg italic font-black px-4 leading-relaxed relative z-10">
-                "Barangsiapa yang berpuasa Ramadhan karena iman dan mengharap pahala, maka diampuni dosa-dosanya yang telah lalu."
-            </p>
-        </div>
-
-        <!-- Papan Bintang -->
-        <section class="bg-[#416D5B] text-white p-8 rounded-[3rem] shadow-2xl border-b-8 border-[#2D4D40]">
-            <div class="flex items-center gap-3 mb-8">
-                <i data-lucide="award" class="text-yellow-400 w-8 h-8"></i>
-                <h2 class="text-xl font-black uppercase tracking-tight">Papan Bintang Keluarga</h2>
-            </div>
-            <div id="leaderboard" class="space-y-6">
-                <!-- Data akan diisi oleh JavaScript -->
-            </div>
-        </section>
-
-    </main>
-
-    <!-- Modal Input -->
-    <div id="modal-overlay" class="fixed inset-0 bg-emerald-900/80 backdrop-blur-md z-50 hidden flex items-end sm:items-center justify-center">
-        <div class="bg-white w-full max-w-md rounded-t-[3rem] sm:rounded-[3rem] shadow-2xl overflow-hidden animate-pop border-t-8 border-emerald-500 max-h-[90vh] flex flex-col">
-            <div class="bg-[#5FB494] p-8 text-white text-center relative">
-                <button onclick="closeModal()" class="absolute right-6 top-6 p-2 bg-black/10 rounded-xl hover:bg-black/20 outline-none">
-                    <i data-lucide="x"></i>
-                </button>
-                <div id="modal-avatar" class="text-5xl mb-2">👨</div>
-                <h3 id="modal-name" class="text-2xl font-black uppercase">Nama Anggota</h3>
-                <p class="text-emerald-100 text-xs font-bold uppercase tracking-widest mt-1">Ceklis Ibadah Hari Ini</p>
-            </div>
-            <div id="task-list" class="p-6 space-y-3 bg-[#FDFCF0] overflow-y-auto">
-                <!-- Checklist akan diisi oleh JavaScript -->
-            </div>
-            <div class="p-6 bg-[#FDFCF0]">
-                <button onclick="closeModal()" class="w-full bg-[#5FB494] text-white py-4 rounded-2xl font-black shadow-lg border-b-4 border-[#3D7A63] active:scale-95 transition-all outline-none">
-                    SIMPAN & TUTUP ✨
-                </button>
-            </div>
+            
+            <p class="text-center text-[10px] text-slate-400 py-4 italic">Gunakan prompt visual di atas pada Leonardo.ai atau Midjourney.</p>
         </div>
     </div>
 
     <script>
-        // Data Dasar
-        const familyMembers = ['Papa Ival', 'Mama Linda', 'Kaka Latifa', 'Ade Aulia'];
-        const tasks = [
-            { id: 'puasa', label: 'Puasa', icon: '🌙' },
-            { id: 'solat', label: 'Solat 5 Waktu', icon: '🕌' },
-            { id: 'quran', label: 'Baca Quran 1 Juz', icon: '📖' },
-            { id: 'duha', label: 'Solat Duha', icon: '☀️' },
-            { id: 'tahajud', label: 'Solat Tahajud', icon: '✨' }
-        ];
+        /** * KONFIGURASI API KEY
+         * Masukkan API Key Anda di antara tanda kutip di bawah ini.
+         */
+        const INTERNAL_API_KEY = "AIzaSyDG3bEth2mNJjuiqhjlBcwZFv7B1drNhr0";
 
-        let currentDate = new Date().toISOString().split('T')[0];
-        let storageData = JSON.parse(localStorage.getItem('family_ramadhan_data')) || {};
-        let activeMember = null;
-
-        // Inisialisasi Icons
-        function initIcons() {
-            lucide.createIcons();
-        }
-
-        // Navigasi Tanggal
-        function changeDate(days) {
-            let date = new Date(currentDate);
-            date.setDate(date.getDate() + days);
-            currentDate = date.toISOString().split('T')[0];
-            render();
-        }
-
-        function formatDisplayDate(dateStr) {
-            const options = { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' };
-            return new Date(dateStr).toLocaleDateString('id-ID', options);
-        }
-
-        // Logika Perhitungan
-        function getProgress(name, date) {
-            const dayData = storageData[date]?.[name] || {};
-            const doneCount = Object.values(dayData).filter(Boolean).length;
-            return (doneCount / tasks.length) * 100;
-        }
-
-        function getAverage(name) {
-            const dates = Object.keys(storageData);
-            if (dates.length === 0) return 0;
-            let total = 0;
-            dates.forEach(d => total += getProgress(name, d));
-            return total / dates.length;
-        }
-
-        // Fungsi Toggle Tugas
-        function toggleTask(taskId) {
-            if (!storageData[currentDate]) storageData[currentDate] = {};
-            if (!storageData[currentDate][activeMember]) storageData[currentDate][activeMember] = {};
+        async function runAI() {
+            const topic = document.getElementById('topicInput').value.trim();
             
-            storageData[currentDate][activeMember][taskId] = !storageData[currentDate][activeMember][taskId];
+            if (!INTERNAL_API_KEY || INTERNAL_API_KEY === "MASUKKAN_API_KEY_ANDA_DI_SINI") {
+                return alert("Mohon masukkan API Key ke dalam kode (baris 86) sebelum digunakan.");
+            }
             
-            localStorage.setItem('family_ramadhan_data', JSON.stringify(storageData));
-            renderTasks();
-            render();
-        }
+            if (!topic) return alert("Masukkan topik konten!");
 
-        // UI Rendering
-        function openModal(name) {
-            activeMember = name;
-            document.getElementById('modal-name').innerText = name;
-            document.getElementById('modal-avatar').innerText = name.includes('Papa') ? '👨' : name.includes('Mama') ? '👩' : '🧒';
-            document.getElementById('modal-overlay').classList.remove('hidden');
-            document.body.style.overflow = 'hidden'; // Stop scrolling
-            renderTasks();
-        }
+            const btn = document.getElementById('execBtn');
+            const loader = document.getElementById('loader');
+            const resultArea = document.getElementById('resultArea');
+            const btnText = document.getElementById('btnText');
 
-        function closeModal() {
-            document.getElementById('modal-overlay').classList.add('hidden');
-            document.body.style.overflow = 'auto'; // Re-enable scrolling
-            activeMember = null;
-        }
+            btn.disabled = true;
+            btnText.innerText = "Sedang Memproses...";
+            loader.classList.remove('hidden');
 
-        function renderTasks() {
-            const container = document.getElementById('task-list');
-            container.innerHTML = '';
+            const model = "gemini-2.5-flash-preview-09-2025";
+            const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${INTERNAL_API_KEY}`;
             
-            tasks.forEach(task => {
-                const isDone = storageData[currentDate]?.[activeMember]?.[task.id];
-                const item = document.createElement('div');
-                item.className = `flex items-center justify-between p-4 rounded-2xl border-4 transition-all cursor-pointer ${isDone ? 'bg-emerald-50 border-emerald-500' : 'bg-white border-transparent shadow-sm'}`;
-                item.onclick = () => toggleTask(task.id);
-                item.innerHTML = `
-                    <div class="flex items-center gap-3">
-                        <span class="text-2xl">${task.icon}</span>
-                        <span class="font-black text-sm">${task.label}</span>
-                    </div>
-                    <div class="w-8 h-8 rounded-xl border-4 flex items-center justify-center ${isDone ? 'bg-emerald-500 border-emerald-500 text-white' : 'border-slate-100 bg-slate-50'}">
-                        ${isDone ? '<i data-lucide="check" class="w-5 h-5 text-white"></i>' : ''}
-                    </div>
-                `;
-                container.appendChild(item);
-            });
-            initIcons();
+            const systemPrompt = `Anda adalah Content Creator Viral. Buatlah naskah video pendek viral untuk topik yang diberikan. 
+            Struktur naskah: Hook, Isi Utama, Call to Action. Gunakan Bahasa Indonesia.
+            Setelah naskah, tambahkan pemisah '###' dan berikan satu prompt gambar AI sinematik dalam Bahasa Inggris.`;
+
+            try {
+                const response = await fetch(url, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        contents: [{ parts: [{ text: `Topik: ${topic}\n\n${systemPrompt}` }] }]
+                    })
+                });
+
+                if (!response.ok) {
+                    const errorJson = await response.json();
+                    throw new Error(errorJson.error?.message || "Terjadi kesalahan pada API.");
+                }
+
+                const data = await response.json();
+                const fullText = data.candidates[0].content.parts[0].text;
+                
+                let script = fullText;
+                let prompt = "Cinematic high-quality, professional photography style related to " + topic;
+
+                if (fullText.includes('###')) {
+                    const parts = fullText.split('###');
+                    script = parts[0].trim();
+                    prompt = parts[1].trim();
+                }
+
+                document.getElementById('scriptOut').innerText = script;
+                document.getElementById('promptOut').innerText = prompt;
+                resultArea.classList.remove('hidden');
+                
+                resultArea.scrollIntoView({ behavior: 'smooth', block: 'start' });
+
+            } catch (err) {
+                alert("Kesalahan: " + err.message);
+            } finally {
+                btn.disabled = false;
+                btnText.innerText = "Buat Naskah & Visual ✨";
+                loader.classList.add('hidden');
+            }
         }
 
-        function render() {
-            document.getElementById('display-date').innerText = formatDisplayDate(currentDate);
-
-            // Render Grid Keluarga
-            const grid = document.getElementById('family-grid');
-            grid.innerHTML = '';
-            familyMembers.forEach(name => {
-                const prog = getProgress(name, currentDate);
-                const isFull = prog === 100;
-                const card = document.createElement('div');
-                card.onclick = () => openModal(name);
-                card.className = `bg-white p-6 rounded-[2.5rem] border-4 cursor-pointer transition-all hover:scale-[1.02] active:scale-95 ${isFull ? 'completed-shadow' : 'border-emerald-100 card-shadow'}`;
-                card.innerHTML = `
-                    <div class="flex justify-between items-center mb-4">
-                        <div class="flex items-center gap-3">
-                            <span class="text-3xl">${name.includes('Papa') ? '👨' : name.includes('Mama') ? '👩' : '🧒'}</span>
-                            <h3 class="text-lg font-black">${name}</h3>
-                        </div>
-                        <i data-lucide="chevron-right" class="text-slate-300"></i>
-                    </div>
-                    <div class="text-right text-[10px] font-black text-slate-400 mb-1 tracking-widest">${Math.round(prog)}% SELESAI</div>
-                    <div class="w-full bg-slate-100 h-4 rounded-full overflow-hidden p-1">
-                        <div class="h-full rounded-full transition-all duration-700 ${isFull ? 'bg-yellow-400' : 'bg-emerald-500'}" style="width: ${prog}%"></div>
-                    </div>
-                `;
-                grid.appendChild(card);
-            });
-
-            // Render Leaderboard
-            const leaderboard = document.getElementById('leaderboard');
-            leaderboard.innerHTML = '';
-            familyMembers.forEach(name => {
-                const avg = getAverage(name);
-                const item = document.createElement('div');
-                item.className = 'space-y-2';
-                item.innerHTML = `
-                    <div class="flex justify-between text-xs font-black uppercase tracking-wider">
-                        <span>${name}</span>
-                        <span class="text-yellow-400">${avg.toFixed(1)}%</span>
-                    </div>
-                    <div class="w-full bg-black/20 h-3 rounded-full overflow-hidden p-0.5 border border-white/10">
-                        <div class="h-full bg-yellow-400 rounded-full transition-all duration-1000" style="width: ${avg}%"></div>
-                    </div>
-                `;
-                leaderboard.appendChild(item);
-            });
-
-            initIcons();
+        function copyToClipboard(id) {
+            const text = document.getElementById(id).innerText;
+            const el = document.createElement('textarea');
+            el.value = text;
+            document.body.appendChild(el);
+            el.select();
+            document.execCommand('copy');
+            document.body.removeChild(el);
+            
+            const btn = event.target;
+            const original = btn.innerText;
+            btn.innerText = "TERSALIN!";
+            setTimeout(() => { btn.innerText = original; }, 2000);
         }
-
-        // Jalankan Pertama Kali
-        window.onload = render;
     </script>
 </body>
 </html>
