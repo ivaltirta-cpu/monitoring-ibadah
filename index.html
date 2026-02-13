@@ -25,7 +25,6 @@
             box-shadow: 0 4px 0px 0px #E2E8F0;
         }
 
-        /* Perbaikan Bayangan Kartu Selesai */
         .completed-shadow {
             box-shadow: 0 6px 0px 0px #FACC15;
             border-color: #FACC15 !important;
@@ -40,13 +39,12 @@
             100% { transform: scale(1); opacity: 1; }
         }
 
-        /* Memastikan ikon Lucide ter-render dengan benar */
         .lucide {
             vertical-align: middle;
         }
     </style>
 </head>
-<body class="pb-12 text-slate-800Select">
+<body class="pb-12 text-slate-800">
 
     <!-- Header -->
     <header class="bg-[#5FB494] text-white p-6 rounded-b-[3rem] mb-8 text-center border-b-4 border-[#4A9378] shadow-lg">
@@ -79,6 +77,19 @@
             <!-- Data akan diisi oleh JavaScript -->
         </div>
 
+        <!-- Progress Bacaan Quran (BARU) -->
+        <section class="bg-white p-6 rounded-[2.5rem] border-4 border-emerald-100 card-shadow">
+            <div class="flex items-center gap-3 mb-4">
+                <div class="bg-emerald-100 p-2 rounded-xl text-emerald-600">
+                    <i data-lucide="book-open" class="w-6 h-6"></i>
+                </div>
+                <h2 class="text-lg font-black uppercase tracking-tight text-emerald-800">Progress Bacaan Quran</h2>
+            </div>
+            <div id="quran-progress-list" class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <!-- Data akan diisi oleh JavaScript -->
+            </div>
+        </section>
+
         <!-- Pesan Hikmah (AI Placeholder) -->
         <div class="bg-emerald-500 text-white p-6 rounded-[2.5rem] shadow-xl border-b-8 border-emerald-700 text-center relative overflow-hidden">
             <div class="flex items-center justify-center gap-2 mb-2 text-yellow-300 font-black text-[10px] uppercase tracking-widest">
@@ -89,7 +100,7 @@
             </p>
         </div>
 
-        <!-- Papan Bintang (Diubah Judulnya) -->
+        <!-- Capaian Akumulatif -->
         <section class="bg-[#416D5B] text-white p-8 rounded-[3rem] shadow-2xl border-b-8 border-[#2D4D40]">
             <div class="flex items-center gap-3 mb-8">
                 <i data-lucide="award" class="text-yellow-400 w-8 h-8"></i>
@@ -102,10 +113,9 @@
 
     </main>
 
-    <!-- Modal Input (Diperketat Layoutnya) -->
+    <!-- Modal Input Checklist -->
     <div id="modal-overlay" class="fixed inset-0 bg-emerald-900/80 backdrop-blur-md z-50 hidden flex items-end sm:items-center justify-center transition-opacity duration-300">
         <div class="bg-white w-full max-w-md rounded-t-[2.5rem] sm:rounded-[3rem] shadow-2xl overflow-hidden animate-pop border-t-8 border-emerald-500 max-h-[95vh] flex flex-col">
-            <!-- Header Modal dikurangi paddingnya (p-8 -> p-5) -->
             <div class="bg-[#5FB494] p-5 text-white text-center relative">
                 <button onclick="closeModal()" class="absolute right-5 top-5 p-1.5 bg-black/10 rounded-lg hover:bg-black/20 outline-none">
                     <i data-lucide="x" class="w-5 h-5"></i>
@@ -117,15 +127,36 @@
                 </div>
             </div>
             
-            <!-- List Task dikurangi padding dan space-nya (p-6 -> p-4, space-y-3 -> space-y-2) -->
             <div id="task-list" class="p-4 space-y-2 bg-[#FDFCF0] overflow-y-auto flex-1">
                 <!-- Checklist akan diisi oleh JavaScript -->
             </div>
             
-            <!-- Footer dikurangi paddingnya -->
             <div class="p-4 bg-[#FDFCF0] shrink-0">
                 <button onclick="closeModal()" class="w-full bg-[#5FB494] text-white py-3 rounded-xl font-black shadow-lg border-b-4 border-[#3D7A63] active:scale-95 transition-all outline-none hover:bg-[#4A9378]">
                     SIMPAN & TUTUP ✨
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Input Quran (BARU) -->
+    <div id="quran-modal-overlay" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-[60] hidden flex items-center justify-center p-4">
+        <div class="bg-white w-full max-w-xs rounded-[2rem] shadow-2xl overflow-hidden animate-pop border-b-8 border-emerald-600">
+            <div class="bg-emerald-600 p-6 text-white text-center">
+                <h3 class="text-lg font-black uppercase italic">Bacaan Quran Hari Ini</h3>
+                <p class="text-[10px] opacity-80 uppercase tracking-widest mt-1">Sudah Sampai Mana?</p>
+            </div>
+            <div class="p-6 space-y-4">
+                <div>
+                    <label class="text-[10px] font-black uppercase text-slate-400 mb-1 block">Nama Surat</label>
+                    <input type="text" id="quran-surat" class="w-full p-3 bg-slate-50 border-2 border-slate-100 rounded-xl focus:border-emerald-500 outline-none font-bold text-sm" placeholder="Contoh: Al-Baqarah">
+                </div>
+                <div>
+                    <label class="text-[10px] font-black uppercase text-slate-400 mb-1 block">Ayat Ke</label>
+                    <input type="number" id="quran-ayat" class="w-full p-3 bg-slate-50 border-2 border-slate-100 rounded-xl focus:border-emerald-500 outline-none font-bold text-sm" placeholder="Contoh: 155">
+                </div>
+                <button onclick="saveQuranProgress()" class="w-full bg-emerald-600 text-white py-3 rounded-xl font-black shadow-lg border-b-4 border-emerald-800 active:scale-95 transition-all outline-none">
+                    SIMPAN BACAAN
                 </button>
             </div>
         </div>
@@ -146,20 +177,17 @@
         let storageData = JSON.parse(localStorage.getItem('family_ramadhan_data')) || {};
         let activeMember = null;
 
-        // Fungsi Helper mendapatkan Ikon Hijab/Pria
         function getMemberIcon(name) {
             if (name.toLowerCase().includes('papa') || name.toLowerCase().includes('ayah')) return '👨';
-            return '🧕'; // Default icon for Mama/Kids
+            return '🧕';
         }
 
-        // Inisialisasi Icons
         function initIcons() {
             if (window.lucide) {
                 lucide.createIcons();
             }
         }
 
-        // Navigasi Tanggal
         function changeDate(days) {
             let date = new Date(currentDate);
             date.setDate(date.getDate() + days);
@@ -172,7 +200,6 @@
             return new Date(dateStr).toLocaleDateString('id-ID', options);
         }
 
-        // Logika Perhitungan
         function getProgress(name, date) {
             const dayData = storageData[date]?.[name] || {};
             let doneCount = 0;
@@ -185,57 +212,91 @@
         function getAverage(name) {
             const dates = Object.keys(storageData);
             if (dates.length === 0) return 0;
-            
-            // Calculate total score across all dates tracked
             let totalScore = 0;
             let dateCount = 0;
-
             dates.forEach(d => {
                 const dayData = storageData[d]?.[name];
-                // Only count days where this person has at least one entry or the date key exists
                 if (dayData) {
                     let dailyDone = 0;
-                    tasks.forEach(task => {
-                        if (dayData[task.id]) dailyDone++;
-                    });
+                    tasks.forEach(task => { if (dayData[task.id]) dailyDone++; });
                     totalScore += (dailyDone / tasks.length) * 100;
                     dateCount++;
                 }
             });
-
             return dateCount === 0 ? 0 : totalScore / dateCount;
         }
 
-        // Fungsi Toggle Tugas
+        // Mendapatkan bacaan quran terakhir (lintas tanggal)
+        function getLatestQuran(name) {
+            // Urutkan tanggal dari yang terbaru
+            const sortedDates = Object.keys(storageData).sort((a, b) => new Date(b) - new Date(a));
+            for (let date of sortedDates) {
+                const data = storageData[date]?.[name];
+                if (data && data.quran_surat) {
+                    return { surat: data.quran_surat, ayat: data.quran_ayat };
+                }
+            }
+            return null;
+        }
+
         function toggleTask(taskId) {
             if (!storageData[currentDate]) storageData[currentDate] = {};
             if (!storageData[currentDate][activeMember]) storageData[currentDate][activeMember] = {};
             
-            // Toggle value
             const currentVal = storageData[currentDate][activeMember][taskId];
+            
+            // Logika Khusus untuk Quran
+            if (taskId === 'quran' && !currentVal) {
+                openQuranModal();
+                return;
+            }
+
             storageData[currentDate][activeMember][taskId] = !currentVal;
-            
             localStorage.setItem('family_ramadhan_data', JSON.stringify(storageData));
-            
-            // Update UI elements immediately
-            renderTasks(); // Re-render the list inside modal
+            renderTasks();
         }
 
-        // UI Rendering
+        function openQuranModal() {
+            // Ambil data terakhir untuk default input
+            const last = getLatestQuran(activeMember);
+            document.getElementById('quran-surat').value = last ? last.surat : '';
+            document.getElementById('quran-ayat').value = last ? last.ayat : '';
+            document.getElementById('quran-modal-overlay').classList.remove('hidden');
+        }
+
+        function saveQuranProgress() {
+            const surat = document.getElementById('quran-surat').value;
+            const ayat = document.getElementById('quran-ayat').value;
+
+            if (!surat || !ayat) return;
+
+            if (!storageData[currentDate]) storageData[currentDate] = {};
+            if (!storageData[currentDate][activeMember]) storageData[currentDate][activeMember] = {};
+
+            storageData[currentDate][activeMember]['quran'] = true;
+            storageData[currentDate][activeMember]['quran_surat'] = surat;
+            storageData[currentDate][activeMember]['quran_ayat'] = ayat;
+
+            localStorage.setItem('family_ramadhan_data', JSON.stringify(storageData));
+            
+            document.getElementById('quran-modal-overlay').classList.add('hidden');
+            renderTasks();
+        }
+
         function openModal(name) {
             activeMember = name;
             document.getElementById('modal-name').innerText = name;
             document.getElementById('modal-avatar').innerText = getMemberIcon(name);
             document.getElementById('modal-overlay').classList.remove('hidden');
-            document.body.style.overflow = 'hidden'; // Stop scrolling
+            document.body.style.overflow = 'hidden';
             renderTasks();
         }
 
         function closeModal() {
             document.getElementById('modal-overlay').classList.add('hidden');
-            document.body.style.overflow = 'auto'; // Re-enable scrolling
+            document.body.style.overflow = 'auto';
             activeMember = null;
-            render(); // Update the main dashboard when closing modal
+            render();
         }
 
         function renderTasks() {
@@ -244,21 +305,26 @@
             
             tasks.forEach(task => {
                 const isDone = storageData[currentDate]?.[activeMember]?.[task.id];
-                
                 const item = document.createElement('div');
-                // Styling logic
                 const bgClass = isDone ? 'bg-emerald-50 border-emerald-500' : 'bg-white border-transparent shadow-sm hover:border-emerald-200';
                 const checkClass = isDone ? 'bg-emerald-500 border-emerald-500' : 'border-slate-200 bg-slate-50';
 
-                // Diperkecil: p-4 -> p-2.5, rounded-2xl -> rounded-xl
                 item.className = `flex items-center justify-between p-2.5 rounded-xl border-2 transition-all cursor-pointer ${bgClass}`;
                 item.onclick = () => toggleTask(task.id);
                 
-                // Font dan icon diperkecil sedikit agar muat 5 baris
+                let details = '';
+                if(task.id === 'quran' && isDone) {
+                    const data = storageData[currentDate][activeMember];
+                    details = `<div class="text-[10px] text-emerald-600 font-bold">${data.quran_surat} : ${data.quran_ayat}</div>`;
+                }
+
                 item.innerHTML = `
                     <div class="flex items-center gap-3">
                         <span class="text-xl">${task.icon}</span>
-                        <span class="font-bold text-slate-700 text-sm">${task.label}</span>
+                        <div>
+                            <span class="font-bold text-slate-700 text-sm block">${task.label}</span>
+                            ${details}
+                        </div>
                     </div>
                     <div class="w-6 h-6 rounded-lg border-2 flex items-center justify-center transition-all ${checkClass}">
                         ${isDone ? '<i data-lucide="check" class="w-4 h-4 text-white"></i>' : ''}
@@ -278,7 +344,6 @@
             familyMembers.forEach(name => {
                 const prog = getProgress(name, currentDate);
                 const isFull = prog === 100;
-                
                 const card = document.createElement('div');
                 card.onclick = () => openModal(name);
                 card.className = `bg-white p-6 rounded-[2.5rem] border-4 cursor-pointer transition-all hover:-translate-y-1 active:scale-95 relative overflow-hidden ${isFull ? 'completed-shadow' : 'border-emerald-100 card-shadow hover:border-emerald-200'}`;
@@ -293,46 +358,52 @@
                            <i data-lucide="chevron-right" class="text-slate-400 w-5 h-5"></i>
                         </div>
                     </div>
-                    
                     <div class="flex justify-between items-end mb-2 relative z-10">
-                        <!-- Teks diganti jadi PROGRESS HARI INI -->
                         <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">PROGRESS HARI INI</span>
                         <span class="text-xs font-black ${isFull ? 'text-yellow-500' : 'text-emerald-600'}">${Math.round(prog)}%</span>
                     </div>
-
                     <div class="w-full bg-slate-100 h-4 rounded-full overflow-hidden p-1 relative z-10">
                         <div class="h-full rounded-full transition-all duration-700 ${isFull ? 'bg-yellow-400' : 'bg-emerald-500'}" style="width: ${prog}%"></div>
                     </div>
-                    
                     ${isFull ? '<div class="absolute -right-4 -bottom-4 text-yellow-100/50 rotate-12"><i data-lucide="trophy" class="w-32 h-32"></i></div>' : ''}
                 `;
                 grid.appendChild(card);
             });
 
+            // Render Progress Quran (BARU)
+            const quranList = document.getElementById('quran-progress-list');
+            quranList.innerHTML = '';
+            familyMembers.forEach(name => {
+                const last = getLatestQuran(name);
+                const item = document.createElement('div');
+                item.className = 'bg-slate-50 p-4 rounded-2xl flex items-center gap-3 border border-slate-100';
+                item.innerHTML = `
+                    <div class="text-2xl">${getMemberIcon(name)}</div>
+                    <div>
+                        <div class="text-[10px] font-black uppercase text-slate-400">${name}</div>
+                        <div class="text-sm font-bold text-slate-700">
+                            ${last ? `<span class="text-emerald-600">${last.surat}</span> <span class="text-slate-400">Ayat</span> ${last.ayat}` : '<span class="text-slate-300 italic">Belum ada bacaan</span>'}
+                        </div>
+                    </div>
+                `;
+                quranList.appendChild(item);
+            });
+
             // Render Leaderboard
             const leaderboard = document.getElementById('leaderboard');
             leaderboard.innerHTML = '';
-            
-            // Sort leaderboard by average score
             const sortedMembers = [...familyMembers].sort((a, b) => getAverage(b) - getAverage(a));
-
             sortedMembers.forEach((name, index) => {
                 const avg = getAverage(name);
                 const item = document.createElement('div');
                 item.className = 'space-y-2';
-                
-                // Add medal for top 3
                 let medal = '';
                 if(index === 0 && avg > 0) medal = '🥇';
                 if(index === 1 && avg > 0) medal = '🥈';
                 if(index === 2 && avg > 0) medal = '🥉';
-
                 item.innerHTML = `
                     <div class="flex justify-between text-xs font-black uppercase tracking-wider items-center">
-                        <div class="flex gap-2">
-                            <span>${medal}</span>
-                            <span>${name}</span>
-                        </div>
+                        <div class="flex gap-2"><span>${medal}</span><span>${name}</span></div>
                         <span class="text-yellow-400 bg-black/20 px-2 py-0.5 rounded-lg">${avg.toFixed(0)}%</span>
                     </div>
                     <div class="w-full bg-black/20 h-3 rounded-full overflow-hidden p-0.5 border border-white/10">
@@ -345,10 +416,8 @@
             initIcons();
         }
 
-        // Jalankan Pertama Kali
         window.onload = function() {
             render();
-            // Memastikan icon terload jika script lucide agak lambat
             setTimeout(initIcons, 500); 
         };
     </script>
