@@ -25,7 +25,7 @@
             box-shadow: 0 4px 0px 0px #E2E8F0;
         }
 
-        /* Perbaikan Bayangan Kartu Selesai agar lebih terlihat di Vercel */
+        /* Perbaikan Bayangan Kartu Selesai */
         .completed-shadow {
             box-shadow: 0 6px 0px 0px #FACC15;
             border-color: #FACC15 !important;
@@ -46,7 +46,7 @@
         }
     </style>
 </head>
-<body class="pb-12 text-slate-800">
+<body class="pb-12 text-slate-800Select">
 
     <!-- Header -->
     <header class="bg-[#5FB494] text-white p-6 rounded-b-[3rem] mb-8 text-center border-b-4 border-[#4A9378] shadow-lg">
@@ -59,7 +59,7 @@
         </div>
 
         <!-- Date Navigator -->
-        <div class="flex items-center justify-between max-sm mx-auto bg-white/20 p-4 rounded-3xl border border-white/30 backdrop-blur-md">
+        <div class="flex items-center justify-between max-w-sm mx-auto bg-white/20 p-4 rounded-3xl border border-white/30 backdrop-blur-md">
             <button onclick="changeDate(-1)" class="p-2 hover:bg-white/20 rounded-xl transition-all outline-none">
                 <i data-lucide="chevron-left"></i>
             </button>
@@ -89,11 +89,11 @@
             </p>
         </div>
 
-        <!-- Papan Bintang -->
+        <!-- Papan Bintang (Diubah Judulnya) -->
         <section class="bg-[#416D5B] text-white p-8 rounded-[3rem] shadow-2xl border-b-8 border-[#2D4D40]">
             <div class="flex items-center gap-3 mb-8">
                 <i data-lucide="award" class="text-yellow-400 w-8 h-8"></i>
-                <h2 class="text-xl font-black uppercase tracking-tight">Papan Bintang Keluarga</h2>
+                <h2 class="text-xl font-black uppercase tracking-tight">CAPAIAN AKUMULATIF</h2>
             </div>
             <div id="leaderboard" class="space-y-6">
                 <!-- Data akan diisi oleh JavaScript -->
@@ -102,22 +102,29 @@
 
     </main>
 
-    <!-- Modal Input -->
-    <div id="modal-overlay" class="fixed inset-0 bg-emerald-900/80 backdrop-blur-md z-50 hidden flex items-end sm:items-center justify-center">
-        <div class="bg-white w-full max-w-md rounded-t-[3rem] sm:rounded-[3rem] shadow-2xl overflow-hidden animate-pop border-t-8 border-emerald-500 max-h-[90vh] flex flex-col">
-            <div class="bg-[#5FB494] p-8 text-white text-center relative">
-                <button onclick="closeModal()" class="absolute right-6 top-6 p-2 bg-black/10 rounded-xl hover:bg-black/20 outline-none">
-                    <i data-lucide="x"></i>
+    <!-- Modal Input (Diperketat Layoutnya) -->
+    <div id="modal-overlay" class="fixed inset-0 bg-emerald-900/80 backdrop-blur-md z-50 hidden flex items-end sm:items-center justify-center transition-opacity duration-300">
+        <div class="bg-white w-full max-w-md rounded-t-[2.5rem] sm:rounded-[3rem] shadow-2xl overflow-hidden animate-pop border-t-8 border-emerald-500 max-h-[95vh] flex flex-col">
+            <!-- Header Modal dikurangi paddingnya (p-8 -> p-5) -->
+            <div class="bg-[#5FB494] p-5 text-white text-center relative">
+                <button onclick="closeModal()" class="absolute right-5 top-5 p-1.5 bg-black/10 rounded-lg hover:bg-black/20 outline-none">
+                    <i data-lucide="x" class="w-5 h-5"></i>
                 </button>
-                <div id="modal-avatar" class="text-5xl mb-2">👨</div>
-                <h3 id="modal-name" class="text-2xl font-black uppercase">Nama Anggota</h3>
-                <p class="text-emerald-100 text-xs font-bold uppercase tracking-widest mt-1">Ceklis Ibadah Hari Ini</p>
+                <div class="flex flex-col items-center">
+                    <div id="modal-avatar" class="text-4xl mb-1">👨</div>
+                    <h3 id="modal-name" class="text-xl font-black uppercase">Nama Anggota</h3>
+                    <p class="text-emerald-100 text-[10px] font-bold uppercase tracking-widest">Ceklis Ibadah Hari Ini</p>
+                </div>
             </div>
-            <div id="task-list" class="p-6 space-y-3 bg-[#FDFCF0] overflow-y-auto">
+            
+            <!-- List Task dikurangi padding dan space-nya (p-6 -> p-4, space-y-3 -> space-y-2) -->
+            <div id="task-list" class="p-4 space-y-2 bg-[#FDFCF0] overflow-y-auto flex-1">
                 <!-- Checklist akan diisi oleh JavaScript -->
             </div>
-            <div class="p-6 bg-[#FDFCF0]">
-                <button onclick="closeModal()" class="w-full bg-[#5FB494] text-white py-4 rounded-2xl font-black shadow-lg border-b-4 border-[#3D7A63] active:scale-95 transition-all outline-none">
+            
+            <!-- Footer dikurangi paddingnya -->
+            <div class="p-4 bg-[#FDFCF0] shrink-0">
+                <button onclick="closeModal()" class="w-full bg-[#5FB494] text-white py-3 rounded-xl font-black shadow-lg border-b-4 border-[#3D7A63] active:scale-95 transition-all outline-none hover:bg-[#4A9378]">
                     SIMPAN & TUTUP ✨
                 </button>
             </div>
@@ -141,13 +148,15 @@
 
         // Fungsi Helper mendapatkan Ikon Hijab/Pria
         function getMemberIcon(name) {
-            if (name.includes('Papa')) return '👨';
-            return '🧕'; // Ikon Hijab untuk Mama, Kaka, dan Ade
+            if (name.toLowerCase().includes('papa') || name.toLowerCase().includes('ayah')) return '👨';
+            return '🧕'; // Default icon for Mama/Kids
         }
 
         // Inisialisasi Icons
         function initIcons() {
-            lucide.createIcons();
+            if (window.lucide) {
+                lucide.createIcons();
+            }
         }
 
         // Navigasi Tanggal
@@ -166,16 +175,35 @@
         // Logika Perhitungan
         function getProgress(name, date) {
             const dayData = storageData[date]?.[name] || {};
-            const doneCount = Object.values(dayData).filter(Boolean).length;
+            let doneCount = 0;
+            tasks.forEach(task => {
+                if (dayData[task.id]) doneCount++;
+            });
             return (doneCount / tasks.length) * 100;
         }
 
         function getAverage(name) {
             const dates = Object.keys(storageData);
             if (dates.length === 0) return 0;
-            let total = 0;
-            dates.forEach(d => total += getProgress(name, d));
-            return total / dates.length;
+            
+            // Calculate total score across all dates tracked
+            let totalScore = 0;
+            let dateCount = 0;
+
+            dates.forEach(d => {
+                const dayData = storageData[d]?.[name];
+                // Only count days where this person has at least one entry or the date key exists
+                if (dayData) {
+                    let dailyDone = 0;
+                    tasks.forEach(task => {
+                        if (dayData[task.id]) dailyDone++;
+                    });
+                    totalScore += (dailyDone / tasks.length) * 100;
+                    dateCount++;
+                }
+            });
+
+            return dateCount === 0 ? 0 : totalScore / dateCount;
         }
 
         // Fungsi Toggle Tugas
@@ -183,11 +211,14 @@
             if (!storageData[currentDate]) storageData[currentDate] = {};
             if (!storageData[currentDate][activeMember]) storageData[currentDate][activeMember] = {};
             
-            storageData[currentDate][activeMember][taskId] = !storageData[currentDate][activeMember][taskId];
+            // Toggle value
+            const currentVal = storageData[currentDate][activeMember][taskId];
+            storageData[currentDate][activeMember][taskId] = !currentVal;
             
             localStorage.setItem('family_ramadhan_data', JSON.stringify(storageData));
-            renderTasks();
-            render();
+            
+            // Update UI elements immediately
+            renderTasks(); // Re-render the list inside modal
         }
 
         // UI Rendering
@@ -204,6 +235,7 @@
             document.getElementById('modal-overlay').classList.add('hidden');
             document.body.style.overflow = 'auto'; // Re-enable scrolling
             activeMember = null;
+            render(); // Update the main dashboard when closing modal
         }
 
         function renderTasks() {
@@ -212,16 +244,24 @@
             
             tasks.forEach(task => {
                 const isDone = storageData[currentDate]?.[activeMember]?.[task.id];
+                
                 const item = document.createElement('div');
-                item.className = `flex items-center justify-between p-4 rounded-2xl border-4 transition-all cursor-pointer ${isDone ? 'bg-emerald-50 border-emerald-500' : 'bg-white border-transparent shadow-sm'}`;
+                // Styling logic
+                const bgClass = isDone ? 'bg-emerald-50 border-emerald-500' : 'bg-white border-transparent shadow-sm hover:border-emerald-200';
+                const checkClass = isDone ? 'bg-emerald-500 border-emerald-500' : 'border-slate-200 bg-slate-50';
+
+                // Diperkecil: p-4 -> p-2.5, rounded-2xl -> rounded-xl
+                item.className = `flex items-center justify-between p-2.5 rounded-xl border-2 transition-all cursor-pointer ${bgClass}`;
                 item.onclick = () => toggleTask(task.id);
+                
+                // Font dan icon diperkecil sedikit agar muat 5 baris
                 item.innerHTML = `
                     <div class="flex items-center gap-3">
-                        <span class="text-2xl">${task.icon}</span>
-                        <span class="font-black text-sm">${task.label}</span>
+                        <span class="text-xl">${task.icon}</span>
+                        <span class="font-bold text-slate-700 text-sm">${task.label}</span>
                     </div>
-                    <div class="w-8 h-8 rounded-xl border-4 flex items-center justify-center ${isDone ? 'bg-emerald-500 border-emerald-500 text-white' : 'border-slate-100 bg-slate-50'}">
-                        ${isDone ? '<i data-lucide="check" class="w-5 h-5 text-white"></i>' : ''}
+                    <div class="w-6 h-6 rounded-lg border-2 flex items-center justify-center transition-all ${checkClass}">
+                        ${isDone ? '<i data-lucide="check" class="w-4 h-4 text-white"></i>' : ''}
                     </div>
                 `;
                 container.appendChild(item);
@@ -238,21 +278,33 @@
             familyMembers.forEach(name => {
                 const prog = getProgress(name, currentDate);
                 const isFull = prog === 100;
+                
                 const card = document.createElement('div');
                 card.onclick = () => openModal(name);
-                card.className = `bg-white p-6 rounded-[2.5rem] border-4 cursor-pointer transition-all hover:scale-[1.02] active:scale-95 ${isFull ? 'completed-shadow' : 'border-emerald-100 card-shadow'}`;
+                card.className = `bg-white p-6 rounded-[2.5rem] border-4 cursor-pointer transition-all hover:-translate-y-1 active:scale-95 relative overflow-hidden ${isFull ? 'completed-shadow' : 'border-emerald-100 card-shadow hover:border-emerald-200'}`;
+                
                 card.innerHTML = `
-                    <div class="flex justify-between items-center mb-4">
+                    <div class="flex justify-between items-center mb-4 relative z-10">
                         <div class="flex items-center gap-3">
-                            <span class="text-3xl">${getMemberIcon(name)}</span>
-                            <h3 class="text-lg font-black">${name}</h3>
+                            <span class="text-3xl bg-slate-50 p-2 rounded-full border border-slate-100">${getMemberIcon(name)}</span>
+                            <h3 class="text-lg font-black text-slate-800">${name}</h3>
                         </div>
-                        <i data-lucide="chevron-right" class="text-slate-300"></i>
+                        <div class="bg-slate-100 p-2 rounded-full">
+                           <i data-lucide="chevron-right" class="text-slate-400 w-5 h-5"></i>
+                        </div>
                     </div>
-                    <div class="text-right text-[10px] font-black text-slate-400 mb-1 tracking-widest">${Math.round(prog)}% SELESAI</div>
-                    <div class="w-full bg-slate-100 h-4 rounded-full overflow-hidden p-1">
+                    
+                    <div class="flex justify-between items-end mb-2 relative z-10">
+                        <!-- Teks diganti jadi PROGRESS HARI INI -->
+                        <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">PROGRESS HARI INI</span>
+                        <span class="text-xs font-black ${isFull ? 'text-yellow-500' : 'text-emerald-600'}">${Math.round(prog)}%</span>
+                    </div>
+
+                    <div class="w-full bg-slate-100 h-4 rounded-full overflow-hidden p-1 relative z-10">
                         <div class="h-full rounded-full transition-all duration-700 ${isFull ? 'bg-yellow-400' : 'bg-emerald-500'}" style="width: ${prog}%"></div>
                     </div>
+                    
+                    ${isFull ? '<div class="absolute -right-4 -bottom-4 text-yellow-100/50 rotate-12"><i data-lucide="trophy" class="w-32 h-32"></i></div>' : ''}
                 `;
                 grid.appendChild(card);
             });
@@ -260,14 +312,28 @@
             // Render Leaderboard
             const leaderboard = document.getElementById('leaderboard');
             leaderboard.innerHTML = '';
-            familyMembers.forEach(name => {
+            
+            // Sort leaderboard by average score
+            const sortedMembers = [...familyMembers].sort((a, b) => getAverage(b) - getAverage(a));
+
+            sortedMembers.forEach((name, index) => {
                 const avg = getAverage(name);
                 const item = document.createElement('div');
                 item.className = 'space-y-2';
+                
+                // Add medal for top 3
+                let medal = '';
+                if(index === 0 && avg > 0) medal = '🥇';
+                if(index === 1 && avg > 0) medal = '🥈';
+                if(index === 2 && avg > 0) medal = '🥉';
+
                 item.innerHTML = `
-                    <div class="flex justify-between text-xs font-black uppercase tracking-wider">
-                        <span>${name}</span>
-                        <span class="text-yellow-400">${avg.toFixed(1)}%</span>
+                    <div class="flex justify-between text-xs font-black uppercase tracking-wider items-center">
+                        <div class="flex gap-2">
+                            <span>${medal}</span>
+                            <span>${name}</span>
+                        </div>
+                        <span class="text-yellow-400 bg-black/20 px-2 py-0.5 rounded-lg">${avg.toFixed(0)}%</span>
                     </div>
                     <div class="w-full bg-black/20 h-3 rounded-full overflow-hidden p-0.5 border border-white/10">
                         <div class="h-full bg-yellow-400 rounded-full transition-all duration-1000" style="width: ${avg}%"></div>
@@ -280,7 +346,11 @@
         }
 
         // Jalankan Pertama Kali
-        window.onload = render;
+        window.onload = function() {
+            render();
+            // Memastikan icon terload jika script lucide agak lambat
+            setTimeout(initIcons, 500); 
+        };
     </script>
 </body>
 </html>
